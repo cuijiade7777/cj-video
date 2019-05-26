@@ -43,6 +43,26 @@ public class RegistLoginController {
 		}else {
 			return IMoocJSONResult.errorMsg("用户名已经存在，请换一个再试");
 		}
-		return IMoocJSONResult.ok();
+		user.setPassword("");
+		return IMoocJSONResult.ok(user);
+	}
+	
+	@ApiOperation(value="用户登录", notes="用户登录的接口")
+	@PostMapping("/login")
+	public IMoocJSONResult login(@RequestBody Users user) throws Exception {
+		//1.判断用户名和密码必须不为空
+		if(StringUtils.isBlank(user.getUsername()) || StringUtils.isBlank(user.getPassword())) {
+			return IMoocJSONResult.errorMsg("用户名和密码不能为空...");
+		}
+		
+		//2.判断用户名和密码是否正确
+		Users userResult = userService.queryUserForLogin(user.getUsername(),MD5Utils.getMD5Str(user.getPassword()));
+		
+		if(userResult != null) {
+			userResult.setPassword("");
+			return IMoocJSONResult.ok(userResult);
+		}else {
+			return IMoocJSONResult.errorMsg("用户名或密码不正确，请重试...");
+		}
 	}
 }
