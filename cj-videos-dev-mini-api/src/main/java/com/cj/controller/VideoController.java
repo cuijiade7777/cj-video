@@ -22,6 +22,7 @@ import com.cj.service.VideoService;
 import com.cj.utils.FetchVideoCover;
 import com.cj.utils.IMoocJSONResult;
 import com.cj.utils.MergeVideoMp3;
+import com.cj.utils.PagedResult;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -186,6 +187,16 @@ public class VideoController extends BasicController{
 		
 		videoService.updateVideo(videoId, uploadPathDB);
 		return IMoocJSONResult.ok();
+	}
+	
+	@PostMapping(value="/showAll")
+	public IMoocJSONResult showAll(Integer page) {
+		if(page == null) {
+			page = 1;
+		}
+		
+		PagedResult result = videoService.getAllVideos(page, PAGE_SIZE);
+		return IMoocJSONResult.ok(result);
 	}
 	
 }

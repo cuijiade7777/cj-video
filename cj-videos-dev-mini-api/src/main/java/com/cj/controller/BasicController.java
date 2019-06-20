@@ -16,4 +16,6 @@ public class BasicController {
 	public static final String FILE_SPACE = "D:/cj_videos_dev";
 	
 	public static final String FFMPEG_EXE = "D:\\backup\\ffmpeg\\bin\\ffmpeg.exe";
+	
+	public static final Integer PAGE_SIZE = 5;
 }
