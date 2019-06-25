@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cj.mapper.SearchRecordsMapper;
 import com.cj.mapper.VideosMapper;
 import com.cj.mapper.VideosMapperCustom;
+import com.cj.pojo.SearchRecords;
 import com.cj.pojo.Videos;
 import com.cj.pojo.vo.VideosVO;
 import com.cj.service.VideoService;
@@ -25,6 +27,9 @@ public class VideoServiceImpl implements VideoService {
 	
 	@Autowired
 	private VideosMapperCustom videosMapperCustom;
+	
+	@Autowired
+	private SearchRecordsMapper searchRecordsMapper;
 	
 	@Autowired
 	private Sid sid;
@@ -49,9 +54,21 @@ public class VideoServiceImpl implements VideoService {
 
 	@Transactional(propagation = Propagation.SUPPORTS)
 	@Override
-	public PagedResult getAllVideos(Integer page, Integer pageSize) {
+	public PagedResult getAllVideos(Videos video, Integer isSaveRecord, Integer page, Integer pageSize) {
+		
+		String desc = video.getVideoDesc();
+		
+		//保存热搜词
+		if(isSaveRecord == 1) {
+			SearchRecords record = new SearchRecords();
+			String id = sid.nextShort();
+			record.setId(id);
+			record.setContent(desc);
+			searchRecordsMapper.insert(record);
+		}
+		
 		PageHelper.startPage(page, pageSize);
-		List<VideosVO> list = videosMapperCustom.queryAllVideos();
+		List<VideosVO> list = videosMapperCustom.queryAllVideos(desc);
 		PageInfo<VideosVO> pageList = new PageInfo<>(list);
 		PagedResult pagedResult = new PagedResult();
 		pagedResult.setPage(page);
@@ -59,5 +76,10 @@ public class VideoServiceImpl implements VideoService {
 		pagedResult.setRecords(pageList.getTotal());
 		pagedResult.setRows(list);
 		return pagedResult;
+	}
+
+	@Override
+	public List<String> getHotWords() {
+		return searchRecordsMapper.getHotWords();
 	}
 }

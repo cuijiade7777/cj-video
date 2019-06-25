@@ -10,6 +10,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -189,14 +190,27 @@ public class VideoController extends BasicController{
 		return IMoocJSONResult.ok();
 	}
 	
+	/**
+	 * 分页和搜索查询列表
+	 * @param isSaveRecord 1-需要保存  0或空 不需要保存
+	 * @return
+	 */
 	@PostMapping(value="/showAll")
-	public IMoocJSONResult showAll(Integer page) {
+	public IMoocJSONResult showAll(@RequestBody Videos video, Integer isSaveRecord, Integer page) {
 		if(page == null) {
 			page = 1;
 		}
 		
-		PagedResult result = videoService.getAllVideos(page, PAGE_SIZE);
+		PagedResult result = videoService.getAllVideos(video, isSaveRecord, page, PAGE_SIZE);
 		return IMoocJSONResult.ok(result);
+	}
+	
+	/**
+	 * 查询热搜词列表
+	 */
+	@PostMapping(value="/hot")
+	public IMoocJSONResult hot() {
+		return IMoocJSONResult.ok(videoService.getHotWords());
 	}
 	
 }
