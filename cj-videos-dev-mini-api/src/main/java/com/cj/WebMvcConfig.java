@@ -1,8 +1,12 @@
 package com.cj;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+
+import com.cj.controller.interceptor.MiniInterceptor;
 
 @Configuration
 public class WebMvcConfig extends WebMvcConfigurerAdapter{
@@ -13,5 +17,20 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter{
 				.addResourceLocations("classpath:/META-INF/resources/")
 				.addResourceLocations("file:D:/cj_videos_dev/");
 	}
+	
+	@Bean
+	public MiniInterceptor miniInterceptor() {
+		return new MiniInterceptor();
+	}
+
+	@Override
+	public void addInterceptors(InterceptorRegistry registry) {
+		registry.addInterceptor(miniInterceptor()).addPathPatterns("/user/**")
+												  .addPathPatterns("/video/upload","/video/uploadCover")
+												  .addPathPatterns("/bgm/**");
+		super.addInterceptors(registry);
+	}
+	
+	
 	
 }
