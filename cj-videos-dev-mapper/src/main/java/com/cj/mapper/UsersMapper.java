@@ -4,4 +4,15 @@ import com.cj.pojo.Users;
 import com.cj.utils.MyMapper;
 
 public interface UsersMapper extends MyMapper<Users> {
+	
+	/**
+	 * @Description:用户受喜欢书累加
+	 */
+	public void addReceiveLikeCount(String userId);
+	
+	/**
+	 * @Description:用户受喜欢书累减
+	 */
+	public void reduceReceiveLikeCount(String userId);
+	
 }

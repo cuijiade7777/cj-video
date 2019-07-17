@@ -25,4 +25,9 @@ public interface UserService {
 	 * 查询用户信息
 	 */
 	public Users queryUserInfo(String userId);
+
+	/*
+	 * 查询当前登录者和视频额点赞关系
+	 */
+	public boolean isUserLikeVideo(String loginUserId, String videoId);
 }

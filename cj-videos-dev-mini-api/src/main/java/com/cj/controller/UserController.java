@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cj.pojo.Users;
+import com.cj.pojo.vo.PublisherVideo;
 import com.cj.pojo.vo.UsersVO;
 import com.cj.service.UserService;
 import com.cj.utils.IMoocJSONResult;
@@ -98,5 +99,28 @@ public class UserController extends BasicController{
 		BeanUtils.copyProperties(user, userVO);
 		
 		return IMoocJSONResult.ok(userVO);
+	}
+	
+	@PostMapping("/queryPublisher")
+	public IMoocJSONResult queryPublisher(String loginUserId, String videoId, 
+			String publishUserId){
+		
+		if(StringUtils.isBlank(publishUserId)) {
+			return IMoocJSONResult.errorMsg("");
+		}
+		
+		//1.查询视频发布者的信息
+		Users user = userService.queryUserInfo(publishUserId);
+		UsersVO publisher = new UsersVO();
+		BeanUtils.copyProperties(user, publisher);
+		
+		//2.查询当前登录者和视频额点赞关系
+		boolean userLikeVideo = userService.isUserLikeVideo(loginUserId, videoId);
+		
+		PublisherVideo publisherVideo = new PublisherVideo();
+		publisherVideo.setPublisher(publisher);
+		publisherVideo.setUserLikeVideo(userLikeVideo);
+		
+		return IMoocJSONResult.ok(publisherVideo);
 	}
 }

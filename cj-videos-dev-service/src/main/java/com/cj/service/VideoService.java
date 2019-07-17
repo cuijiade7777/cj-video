@@ -8,19 +8,29 @@ import com.cj.utils.PagedResult;
 public interface VideoService {
 	
 	/**
-	 * 保存视频
+	 * @Description:保存视频
 	 */
 	public String saveVideo(Videos video);
 	
 	/**
-	 * 修改视频封面
+	 * @Description:修改视频封面
 	 */
 	public void updateVideo(String videoId, String coverPath);
 	
 	/**
-	 * 分页查询视频列表
+	 * @Description:分页查询视频列表
 	 */
 	public PagedResult getAllVideos(Videos video, Integer isSaveRecord, Integer page, Integer pageSize);
 
 	public List<String> getHotWords();
+	
+	/**
+	 * @Description:用户喜欢/点赞视频
+	 */
+	public void userLikeVideo(String userId, String videoId, String videoCreateId);
+	
+	/**
+	 * @Description:用户不喜欢/取消点赞视频
+	 */
+	public void userUnLikeVideo(String userId, String videoId, String videoCreateId);
 }
