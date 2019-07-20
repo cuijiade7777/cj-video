@@ -1,38 +1,33 @@
 package com.cj.pojo.vo;
 
-import javax.persistence.*;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-
-@ApiModel(value="用户对象",description="这是用户对象")
 public class UsersVO {
-	@Id
-	@ApiModelProperty(hidden=true)
 	private String id;
 	
-	@ApiModelProperty(hidden=true)
 	private String userToken;
+	
+	private boolean isFollow;
+
+	public boolean isFollow() {
+		return isFollow;
+	}
+
+	public void setFollow(boolean isFollow) {
+		this.isFollow = isFollow;
+	}
 
 	/**
 	 * 用户名
 	 */
-	@ApiModelProperty(value="用户名", name="username", example="张三", required=true)
 	private String username;
 
 	/**
 	 * 密码
 	 */
-	@ApiModelProperty(value="密码", name="password", example="123456", required=true)
-	@JsonIgnore
 	private String password;
 
 	/**
 	 * 我的头像，如果没有默认给一张
 	 */
-	@ApiModelProperty(hidden=true)
 	private String faceImage;
 
 	/**
@@ -43,31 +38,22 @@ public class UsersVO {
 	/**
 	 * 我的粉丝数量
 	 */
-	@ApiModelProperty(hidden=true)
 	private Integer fansCounts;
 
 	/**
 	 * 我关注的人总数
 	 */
-	@ApiModelProperty(hidden=true)
 	private Integer followCounts;
 
 	/**
 	 * 我接受到的赞美/收藏 的数量
 	 */
-	@ApiModelProperty(hidden=true)
 	private Integer receiveLikeCounts;
 
-	/**
-	 * @return id
-	 */
 	public String getId() {
 		return id;
 	}
 
-	/**
-	 * @param id
-	 */
 	public void setId(String id) {
 		this.id = id;
 	}

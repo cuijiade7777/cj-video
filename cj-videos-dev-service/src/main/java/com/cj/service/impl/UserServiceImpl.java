@@ -1,6 +1,6 @@
 package com.cj.service.impl;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -11,9 +11,11 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import com.cj.mapper.UsersFansMapper;
 import com.cj.mapper.UsersLikeVideosMapper;
 import com.cj.mapper.UsersMapper;
 import com.cj.pojo.Users;
+import com.cj.pojo.UsersFans;
 import com.cj.pojo.UsersLikeVideos;
 import com.cj.service.UserService;
 
@@ -28,6 +30,9 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private UsersLikeVideosMapper usersLikeVideosMapper;
+	
+	@Autowired
+	private UsersFansMapper usersFansMapper;
 	
 	@Autowired
 	private Sid sid;
@@ -90,6 +95,45 @@ public class UserServiceImpl implements UserService {
 		criteria.andEqualTo("videoId", videoId);
 		List<UsersLikeVideos> List = usersLikeVideosMapper.selectByExample(example);
 		if(!CollectionUtils.isEmpty(List)) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public void saveUserFanRelation(String userId, String fanId) {
+		String relId = sid.nextShort();
+		UsersFans usersFans = new UsersFans();
+		usersFans.setId(relId);
+		usersFans.setUserId(userId);
+		usersFans.setFanId(fanId);
+		usersFansMapper.insert(usersFans);
+		
+		usersMapper.addFansCount(userId);
+		usersMapper.addFollersCount(fanId);
+	}
+
+	@Override
+	public void deleteUserFanRelation(String userId, String fanId) {
+		Example example = new Example(UsersFans.class);
+		Criteria criteria = example.createCriteria();
+		criteria.andEqualTo("userId",userId);
+		criteria.andEqualTo("fanId",fanId);
+		usersFansMapper.deleteByExample(example);
+		
+		usersMapper.reduceFansCount(userId);
+		usersMapper.reduceFollersCount(fanId);
+	}
+
+	@Override
+	public boolean queryIfFollow(String userId, String fanId) {
+		Example example = new Example(UsersFans.class);
+		Criteria criteria = example.createCriteria();
+		criteria.andEqualTo("userId",userId);
+		criteria.andEqualTo("fanId",fanId);
+		List<UsersFans> list = usersFansMapper.selectByExample(example);
+		
+		if(!CollectionUtils.isEmpty(list)) {
 			return true;
 		}
 		return false;

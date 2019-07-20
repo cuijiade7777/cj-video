@@ -89,7 +89,7 @@ public class UserController extends BasicController{
 	@ApiOperation(value="查询用户信息", notes="查询用户信息的接口")
 	@ApiImplicitParam(name="userId", value="用户ID", required=true, dataType="String", paramType="query")
 	@PostMapping("/query")
-	public IMoocJSONResult query(String userId){
+	public IMoocJSONResult query(String userId, String fanId){
 		
 		if(StringUtils.isBlank(userId)) {
 			return IMoocJSONResult.errorMsg("用户ID不能为空...");
@@ -97,6 +97,8 @@ public class UserController extends BasicController{
 		Users user = userService.queryUserInfo(userId);
 		UsersVO userVO = new UsersVO();
 		BeanUtils.copyProperties(user, userVO);
+		
+		userVO.setFollow(userService.queryIfFollow(userId, fanId));
 		
 		return IMoocJSONResult.ok(userVO);
 	}
@@ -122,5 +124,25 @@ public class UserController extends BasicController{
 		publisherVideo.setUserLikeVideo(userLikeVideo);
 		
 		return IMoocJSONResult.ok(publisherVideo);
+	}
+	
+	@PostMapping("/beyourfans")
+	public IMoocJSONResult beyourfans(String userId, String fanId){
+		
+		if(StringUtils.isBlank(userId) || StringUtils.isBlank(fanId)) {
+			return IMoocJSONResult.errorMsg("");
+		}
+		userService.saveUserFanRelation(userId, fanId);
+		return IMoocJSONResult.ok("关注成功");
+	}
+	
+	@PostMapping("/dontbeyourfans")
+	public IMoocJSONResult dontbeyourfans(String userId, String fanId){
+		
+		if(StringUtils.isBlank(userId) || StringUtils.isBlank(fanId)) {
+			return IMoocJSONResult.errorMsg("");
+		}
+		userService.deleteUserFanRelation(userId, fanId);
+		return IMoocJSONResult.ok("取消关注成功");
 	}
 }
