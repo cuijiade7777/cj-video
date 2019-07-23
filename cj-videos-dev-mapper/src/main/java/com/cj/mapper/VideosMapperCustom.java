@@ -10,7 +10,7 @@ import com.cj.utils.MyMapper;
 
 public interface VideosMapperCustom extends MyMapper<Videos> {
 	
-	public List<VideosVO> queryAllVideos(@Param("videoDesc")String desc);
+	public List<VideosVO> queryAllVideos(@Param("videoDesc")String desc, @Param("userId")String userId);
 	
 	/**
 	 * @Description:对视频喜欢的数量进行累加
@@ -21,4 +21,8 @@ public interface VideosMapperCustom extends MyMapper<Videos> {
 	 * @Description:对视频喜欢的数量进行累减
 	 */
 	public void reduceVideoLikeCount(String videoId);
+
+	public List<VideosVO> queryMyLikeVideos(String userId);
+
+	public List<VideosVO> queryMyFollowVideos(String userId);
 }

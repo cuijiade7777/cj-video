@@ -9,12 +9,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cj.pojo.Users;
+import com.cj.pojo.UsersReport;
 import com.cj.pojo.vo.PublisherVideo;
 import com.cj.pojo.vo.UsersVO;
 import com.cj.service.UserService;
@@ -144,5 +146,14 @@ public class UserController extends BasicController{
 		}
 		userService.deleteUserFanRelation(userId, fanId);
 		return IMoocJSONResult.ok("取消关注成功");
+	}
+	
+	@PostMapping("/reportUser")
+	public IMoocJSONResult reportUser(@RequestBody UsersReport usersReport) throws Exception {
+		
+		// 保存举报信息
+		userService.reportUser(usersReport);
+		
+		return IMoocJSONResult.errorMsg("举报成功...有你平台变得更美好...");
 	}
 }

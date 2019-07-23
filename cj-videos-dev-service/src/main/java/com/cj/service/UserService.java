@@ -1,6 +1,7 @@
 package com.cj.service;
 
 import com.cj.pojo.Users;
+import com.cj.pojo.UsersReport;
 
 public interface UserService {
 	
@@ -45,4 +46,6 @@ public interface UserService {
 	 * 查询用户是否关注
 	 */
 	public boolean queryIfFollow(String userId, String fanId);
+
+	public void reportUser(UsersReport usersReport);
 }

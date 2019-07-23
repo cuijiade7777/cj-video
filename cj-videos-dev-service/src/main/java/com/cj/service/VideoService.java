@@ -33,4 +33,8 @@ public interface VideoService {
 	 * @Description:用户不喜欢/取消点赞视频
 	 */
 	public void userUnLikeVideo(String userId, String videoId, String videoCreateId);
+
+	public PagedResult queryMyLikeVideos(String userId, Integer page, Integer pageSize);
+
+	public PagedResult queryMyFollowVideos(String userId, Integer page, int pageSize);
 }

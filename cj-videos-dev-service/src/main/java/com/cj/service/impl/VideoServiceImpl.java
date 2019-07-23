@@ -69,9 +69,10 @@ public class VideoServiceImpl implements VideoService {
 	public PagedResult getAllVideos(Videos video, Integer isSaveRecord, Integer page, Integer pageSize) {
 		
 		String desc = video.getVideoDesc();
+		String userId = video.getUserId();
 		
 		//保存热搜词
-		if(isSaveRecord == 1) {
+		if (isSaveRecord != null && isSaveRecord == 1) {
 			SearchRecords record = new SearchRecords();
 			String id = sid.nextShort();
 			record.setId(id);
@@ -80,7 +81,7 @@ public class VideoServiceImpl implements VideoService {
 		}
 		
 		PageHelper.startPage(page, pageSize);
-		List<VideosVO> list = videosMapperCustom.queryAllVideos(desc);
+		List<VideosVO> list = videosMapperCustom.queryAllVideos(desc, userId);
 		PageInfo<VideosVO> pageList = new PageInfo<>(list);
 		PagedResult pagedResult = new PagedResult();
 		pagedResult.setPage(page);
@@ -130,5 +131,39 @@ public class VideoServiceImpl implements VideoService {
 		//3.用户受喜欢数量累减
 		usersMapper.reduceReceiveLikeCount(userId);
 		
+	}
+
+	@Transactional(propagation = Propagation.SUPPORTS)
+	@Override
+	public PagedResult queryMyLikeVideos(String userId, Integer page, Integer pageSize) {
+		PageHelper.startPage(page, pageSize);
+		List<VideosVO> list = videosMapperCustom.queryMyLikeVideos(userId);
+				
+		PageInfo<VideosVO> pageList = new PageInfo<>(list);
+		
+		PagedResult pagedResult = new PagedResult();
+		pagedResult.setTotal(pageList.getPages());
+		pagedResult.setRows(list);
+		pagedResult.setPage(page);
+		pagedResult.setRecords(pageList.getTotal());
+		
+		return pagedResult;
+	}
+
+	@Transactional(propagation = Propagation.SUPPORTS)
+	@Override
+	public PagedResult queryMyFollowVideos(String userId, Integer page, int pageSize) {
+		PageHelper.startPage(page, pageSize);
+		List<VideosVO> list = videosMapperCustom.queryMyFollowVideos(userId);
+				
+		PageInfo<VideosVO> pageList = new PageInfo<>(list);
+		
+		PagedResult pagedResult = new PagedResult();
+		pagedResult.setTotal(pageList.getPages());
+		pagedResult.setRows(list);
+		pagedResult.setPage(page);
+		pagedResult.setRecords(pageList.getTotal());
+		
+		return pagedResult;
 	}
 }

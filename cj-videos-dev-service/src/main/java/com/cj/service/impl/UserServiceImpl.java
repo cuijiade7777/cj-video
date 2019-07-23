@@ -1,6 +1,7 @@
 package com.cj.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -14,9 +15,11 @@ import org.springframework.util.CollectionUtils;
 import com.cj.mapper.UsersFansMapper;
 import com.cj.mapper.UsersLikeVideosMapper;
 import com.cj.mapper.UsersMapper;
+import com.cj.mapper.UsersReportMapper;
 import com.cj.pojo.Users;
 import com.cj.pojo.UsersFans;
 import com.cj.pojo.UsersLikeVideos;
+import com.cj.pojo.UsersReport;
 import com.cj.service.UserService;
 
 import tk.mybatis.mapper.entity.Example;
@@ -33,6 +36,9 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private UsersFansMapper usersFansMapper;
+	
+	@Autowired
+	private UsersReportMapper usersReportMapper;
 	
 	@Autowired
 	private Sid sid;
@@ -137,6 +143,17 @@ public class UserServiceImpl implements UserService {
 			return true;
 		}
 		return false;
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED)
+	@Override
+	public void reportUser(UsersReport userReport) {
+		
+		String urId = sid.nextShort();
+		userReport.setId(urId);
+		userReport.setCreateDate(new Date());
+		
+		usersReportMapper.insert(userReport);
 	}
 
 }
