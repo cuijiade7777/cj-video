@@ -1,5 +1,6 @@
 package com.cj.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.n3r.idworker.Sid;
@@ -8,17 +9,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cj.mapper.CommentsMapper;
+import com.cj.mapper.CommentsMapperCustom;
 import com.cj.mapper.SearchRecordsMapper;
 import com.cj.mapper.UsersLikeVideosMapper;
 import com.cj.mapper.UsersMapper;
 import com.cj.mapper.VideosMapper;
 import com.cj.mapper.VideosMapperCustom;
+import com.cj.pojo.Comments;
 import com.cj.pojo.SearchRecords;
 import com.cj.pojo.UsersLikeVideos;
 import com.cj.pojo.Videos;
+import com.cj.pojo.vo.CommentsVO;
 import com.cj.pojo.vo.VideosVO;
 import com.cj.service.VideoService;
 import com.cj.utils.PagedResult;
+import com.cj.utils.TimeAgoUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
@@ -42,6 +48,12 @@ public class VideoServiceImpl implements VideoService {
 	
 	@Autowired
 	private UsersMapper usersMapper;
+	
+	@Autowired
+	private CommentsMapper commentsMapper;
+	
+	@Autowired
+	private CommentsMapperCustom commentsMapperCustom;
 	
 	@Autowired
 	private Sid sid;
@@ -165,5 +177,36 @@ public class VideoServiceImpl implements VideoService {
 		pagedResult.setRecords(pageList.getTotal());
 		
 		return pagedResult;
+	}
+
+	@Transactional(propagation=Propagation.SUPPORTS)
+	@Override
+	public void saveComment(Comments comment) {
+		String id = sid.nextShort();
+		comment.setId(id);
+		comment.setCreateTime(new Date());
+		commentsMapper.insert(comment);
+	}
+
+	@Transactional(propagation=Propagation.SUPPORTS)
+	@Override
+	public PagedResult getAllComments(String videoId, Integer page, Integer pageSize) {
+		
+		PageHelper.startPage(page, pageSize);
+		
+		List<CommentsVO> list = commentsMapperCustom.queryComments(videoId);
+		for (CommentsVO commentsVO : list) {
+			String timeAgo = TimeAgoUtils.format(commentsVO.getCreateTime());
+			commentsVO.setTimeAgoStr(timeAgo);
+		}
+		
+		PageInfo<CommentsVO> pageList = new PageInfo<>(list);
+		PagedResult grid = new PagedResult();
+		grid.setTotal(pageList.getPages());
+		grid.setRows(list);
+		grid.setPage(page);
+		grid.setRecords(pageList.getTotal());
+		
+		return grid;
 	}
 }

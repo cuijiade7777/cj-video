@@ -2,6 +2,7 @@ package com.cj.service;
 
 import java.util.List;
 
+import com.cj.pojo.Comments;
 import com.cj.pojo.Videos;
 import com.cj.utils.PagedResult;
 
@@ -37,4 +38,8 @@ public interface VideoService {
 	public PagedResult queryMyLikeVideos(String userId, Integer page, Integer pageSize);
 
 	public PagedResult queryMyFollowVideos(String userId, Integer page, int pageSize);
+
+	public void saveComment(Comments comment);
+
+	public PagedResult getAllComments(String videoId, Integer page, Integer pageSize);
 }

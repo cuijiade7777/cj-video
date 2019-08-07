@@ -3,7 +3,10 @@ package com.cj.controller;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
@@ -17,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cj.enums.VideoStatusEnum;
 import com.cj.pojo.Bgm;
+import com.cj.pojo.Comments;
 import com.cj.pojo.Videos;
 import com.cj.service.BgmService;
 import com.cj.service.VideoService;
@@ -273,4 +277,32 @@ public class VideoController extends BasicController{
 		return IMoocJSONResult.ok(videosList);
 	}
 	
+	@PostMapping("saveComment")
+	public IMoocJSONResult saveComment(@RequestBody Comments comment,String fatherCommentId, String toUserId) {
+		
+		comment.setFatherCommentId(fatherCommentId);
+		comment.setToUserId(toUserId);
+		videoService.saveComment(comment);
+		return IMoocJSONResult.ok();
+	}
+	
+	@PostMapping("getVideoComments")
+	public IMoocJSONResult getVideoComments(String videoId, Integer page, Integer pageSize) {
+		
+		if(StringUtils.isBlank(videoId)) {
+			return IMoocJSONResult.errorMsg("视频ID不能为空");
+		}
+		
+		if(page == null) {
+			page = 1;
+		}
+		
+		if(pageSize == null) {
+			pageSize = 1;
+		}
+		
+		PagedResult list = videoService.getAllComments(videoId, page, pageSize);
+		
+		return IMoocJSONResult.ok(list);
+	}
 }
